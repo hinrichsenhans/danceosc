@@ -19,7 +19,7 @@ c.addMsgHandler('default', eos_out_handler)
 #read file to get the list of names
 
 if len(sys.argv) != 3 :
-	print('Invalid number of arguments. Usage: fixmyshow.py filename.csv')
+	print('Invalid number of arguments. Usage: fixmyshow.py filename_source.tsv filename_order.tsv')
 	exit(1)	
 songs = dict()
 try:
@@ -27,7 +27,7 @@ try:
 		for line in f:
 			res = line.split('\t')
 			list_num = res[0].strip()
-			act_name = res[1].strip()
+			act_name = res[1].strip().upper()
 			act_desc = res[2].strip()
 			#print("{} {} ({})".format(list_num, act_name, act_desc)) 
 			songs[act_name] = list_num
@@ -38,6 +38,8 @@ try:
 except:
 	c.close()
 	sys.exit()
+
+#print(songs)
 
 try :
 	with open(sys.argv[2], 'r') as f:
