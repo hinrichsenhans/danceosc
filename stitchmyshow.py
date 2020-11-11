@@ -11,10 +11,6 @@ c.connect(('127.0.0.1', 3032))
 def eos_out_handler(addr, tags, stuff, source):
 	1	
 c.addMsgHandler('default', eos_out_handler)
-#c.sendOSC(OSCMessage("/eos/fader/1/config/10"))
-
-#c.sendOSC(OSCMessage("/eos/fader/1/2/fire"))
-
 
 #read file to get the list of names
 
@@ -33,8 +29,6 @@ try:
 			songs[act_name] = list_num
 			# c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(list_num), "{} ({})".format(act_name, act_desc)))	
 		time.sleep(1)
-		#c.close()	
-		#sys.exit()
 except:
 	c.close()
 	sys.exit()
