@@ -11,10 +11,6 @@ c.connect(('127.0.0.1', 3032))
 def eos_out_handler(addr, tags, stuff, source):
 	1	
 c.addMsgHandler('default', eos_out_handler)
-#c.sendOSC(OSCMessage("/eos/fader/1/config/10"))
-
-#c.sendOSC(OSCMessage("/eos/fader/1/2/fire"))
-
 
 #read file to get the list of names
 
@@ -40,11 +36,3 @@ try:
 except:
 	c.close()
 
-#get unique names
-
-#write csv with name, index, uuid
-
-
-# r"/eos/newcmd=Cue 99 /  Copy_To Cue 3 / Enter"
-# r"/eos/set/cuelist/3/label=BEN"
-#quit()
