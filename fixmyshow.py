@@ -5,8 +5,8 @@ import sys
 import time
 
 c = OSCStreamingClient()
-#c.connect(('127.0.0.1', 3032))
-c.connect(('10.101.93.101', 3032))
+c.connect(('127.0.0.1', 3032))
+#c.connect(('10.101.93.101', 3032))
 
 def eos_out_handler(addr, tags, stuff, source):
 	1	
@@ -36,9 +36,10 @@ try:
 		time.sleep(1)
 		c.close()	
 		sys.exit()
+
 except:
 	c.close()
-	sys.exit()
+
 #get unique names
 
 #write csv with name, index, uuid
