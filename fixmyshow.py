@@ -3,6 +3,7 @@ from OSC import *
 
 import sys
 import time
+import traceback
 
 c = OSCStreamingClient()
 
@@ -22,19 +23,32 @@ if len(sys.argv) != 2 :
 f = open(sys.argv[1], 'r')
 try:
 
-	with open(sys.argv[1], 'r') as f:
+	with open(sys.argv[1], 'r', encoding='utf-8-sig') as f:
 		for line in f:
-			res = line.split('\t')
+			res = line.split(',')
 			list_num = res[0].strip()
-			act_name = res[1].strip()
-			act_desc = res[2].strip()
-			print("{} {} ({})".format(list_num, act_name, act_desc)) 
+			if len(res) > 1 :
+				act_name = res[1].strip()
+			if len(res) > 2 :
+				act_desc = res[2].strip()
+			if len(res) > 3 :
+				start_notes = res[3].strip()
+			if len(res) > 4 :
+				ending_notes = res[4].strip()
+			print("{} {} ({}) START {} END {}".format(list_num, act_name, act_desc, start_notes, ending_notes)) 
 			c.sendOSC(OSCMessage("/eos/newcmd", "Cue 99 /  Copy_To Cue {} / Enter".format(list_num)))
 			c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(list_num), "{} ({})".format(act_name, act_desc)))	
+
+			if start_notes:
+				c.sendOSC(OSCMessage("/eos/set/cue/{}/0.5/label".format(list_num), start_notes))
+			if ending_notes:
+				c.sendOSC(OSCMessage("/eos/set/cue/{}/100/label".format(list_num), ending_notes))
 		time.sleep(1)
 		c.close()	
 		sys.exit()
 
-except:
+except Exception as e:
+	traceback.print_exc()
+	print(str(e))
 	c.close()
 
