@@ -21,9 +21,9 @@ if len(sys.argv) != 3 :
 	exit(1)	
 songs = dict()
 try:
-	with open(sys.argv[1], 'r') as f:
+	with open(sys.argv[1], 'r', encoding='utf-8-sig') as f:
 		for line in f:
-			res = line.split('\t')
+			res = line.split(',')
 			list_num = res[0].strip()
 			act_name = res[1].strip().upper()
 			act_desc = res[2].strip()
@@ -38,12 +38,12 @@ except:
 #print(songs)
 
 try :
-	with open(sys.argv[2], 'r') as f:
+	with open(sys.argv[2], 'r', encoding='utf-8-sig') as f:
 		previous = -1
 		for line in f:
 			if previous == -1 :
 				print("START")
-			res = line.split('\t')
+			res = line.split(',')
 			incoming_act = res[1].strip()
 			#print(incoming_act)
 			if not incoming_act.upper() in songs :
