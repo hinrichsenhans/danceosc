@@ -35,6 +35,10 @@ try:
 				start_notes = res[3].strip()
 			if len(res) > 4 :
 				ending_notes = res[4].strip()
+
+			if int(list_num) > 990 :
+				print("Skipping utility list {} {}".format(list_num, act_name, act_desc))
+				continue 
 			print("{} {} ({}) START {} END {}".format(list_num, act_name, act_desc, start_notes, ending_notes)) 
 			c.sendOSC(OSCMessage("/eos/newcmd", "Cue 99 /  Copy_To Cue {} / Enter".format(list_num)))
 			c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(list_num), "{} ({})".format(act_name, act_desc)))	

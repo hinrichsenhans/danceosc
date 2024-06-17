@@ -27,7 +27,7 @@ try:
 			list_num = res[0].strip()
 			act_name = res[1].strip().upper()
 			act_desc = res[2].strip()
-			#print("{} {} ({})".format(list_num, act_name, act_desc)) 
+			print("{} {} ({})".format(list_num, act_name, act_desc)) 
 			songs[act_name] = list_num
 			# c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(list_num), "{} ({})".format(act_name, act_desc)))	
 		time.sleep(1)
