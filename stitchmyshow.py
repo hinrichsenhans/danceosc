@@ -3,6 +3,7 @@ from OSC import *
 
 import sys
 import time
+import csv
 
 c = OSCStreamingClient()
 
@@ -22,35 +23,47 @@ if len(sys.argv) != 3 :
 songs = dict()
 try:
 	with open(sys.argv[1], 'r', encoding='utf-8-sig') as f:
-		for line in f:
-			res = line.split(',')
-			list_num = res[0].strip()
-			act_name = res[1].strip().upper()
-			act_desc = res[2].strip()
-			print("{} {} ({})".format(list_num, act_name, act_desc)) 
+
+		header_dance_name = 'Name of Dance'
+		header_q_list = 'LX Cue List Number'
+		header_dance_style = 'Dance Style'
+		header_age_range = 'Age Range'
+		header_start_notes = 'Dance Beginning Info'
+		header_end_notes = 'Dance End Info'
+
+		rdr = csv.DictReader(f)
+		# print(csv)
+
+		for line in rdr:
+			list_num = line[header_q_list]
+			act_name = line[header_dance_name].upper()
+			print("{} ({})".format(list_num, act_name)) 
 			songs[act_name] = list_num
-			# c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(list_num), "{} ({})".format(act_name, act_desc)))	
 		time.sleep(1)
 except:
 	c.close()
 	sys.exit()
 
-#print(songs)
+print(songs)
 
 try :
 	with open(sys.argv[2], 'r', encoding='utf-8-sig') as f:
 		previous = -1
-		for line in f:
+		header_dance_name = 'Name of Dance'
+		header_q_list = 'LX Cue List Number'
+
+		rdr = csv.DictReader(f)
+		for line in rdr:
+
 			if previous == -1 :
 				print("START")
-			res = line.split(',')
-			incoming_act = res[1].strip()
+			incoming_act = line[header_dance_name]
 			#print(incoming_act)
 			if not incoming_act.upper() in songs :
 				print("SKIPPING {}".format(incoming_act))
 				continue
 			incoming_num = songs[incoming_act.upper()]
-			print("{}: Act {} list {} previous {}".format(res[0], incoming_act, incoming_num, previous)) 
+			print("{}: Act {} list {} previous {}".format(line[header_q_list], incoming_act, incoming_num, previous)) 
 			if not previous == -1:
 				c.sendOSC(OSCMessage("/eos/newcmd", "Cue {} / 100  Link Cue {} / Enter".format(previous, incoming_num)))
 			previous = songs[incoming_act.upper()]
