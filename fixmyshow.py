@@ -58,7 +58,7 @@ try:
 			if line[header_end_notes]:
 				c.sendOSC(OSCMessage(
 					"/eos/set/cue/{}/100/label".format(line[header_q_list]), line[header_end_notes]))
-				
+		time.sleep(1)
 		c.close()	
 		sys.exit()
 
