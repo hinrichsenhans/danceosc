@@ -4,6 +4,7 @@ from OSC import *
 import sys
 import time
 import traceback
+import csv
 
 c = OSCStreamingClient()
 
@@ -24,30 +25,40 @@ f = open(sys.argv[1], 'r')
 try:
 
 	with open(sys.argv[1], 'r', encoding='utf-8-sig') as f:
-		for line in f:
-			res = line.split(',')
-			list_num = res[0].strip()
-			if len(res) > 1 :
-				act_name = res[1].strip()
-			if len(res) > 2 :
-				act_desc = res[2].strip()
-			if len(res) > 3 :
-				start_notes = res[3].strip()
-			if len(res) > 4 :
-				ending_notes = res[4].strip()
 
-			if int(list_num) > 990 :
-				print("Skipping utility list {} {}".format(list_num, act_name, act_desc))
-				continue 
-			print("{} {} ({}) START {} END {}".format(list_num, act_name, act_desc, start_notes, ending_notes)) 
-			c.sendOSC(OSCMessage("/eos/newcmd", "Cue 99 /  Copy_To Cue {} / Enter".format(list_num)))
-			c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(list_num), "{} ({})".format(act_name, act_desc)))	
+		header_dance_name = 'Name of Dance'
+		header_q_list = 'LX Cue List Number'
+		header_dance_style = 'Dance Style'
+		header_age_range = 'Age Range'
+		header_start_notes = 'Dance Beginning Info'
+		header_end_notes = 'Dance End Info'
 
-			if start_notes:
-				c.sendOSC(OSCMessage("/eos/set/cue/{}/0.5/label".format(list_num), start_notes))
-			if ending_notes:
-				c.sendOSC(OSCMessage("/eos/set/cue/{}/100/label".format(list_num), ending_notes))
-		time.sleep(1)
+		csv = csv.DictReader(f)
+		# print(csv)
+
+		for line in csv :
+			# print(line)
+			if(line[header_q_list] == ''):
+				print("Skipping list without cue list number {}".format(line[header_dance_name]))
+				continue
+			if int(line[header_q_list]) > 990:
+				print("Skipping utility list {} {}".format(
+					line[header_q_list], line[header_dance_name], line[header_dance_style]))
+				continue
+			print("{} {} ({} - {}) START {} END {}".format(line[header_q_list], line[header_dance_name], line[header_dance_style], line[header_age_range], line[header_start_notes], line[header_end_notes]))
+
+			c.sendOSC(OSCMessage(
+				"/eos/newcmd", "Cue 99 /  Copy_To Cue {} / Enter".format(line[header_q_list])))
+			c.sendOSC(OSCMessage("/eos/set/cuelist/{}/label".format(
+				line[header_q_list]), "{} ({} - {})".format(line[header_dance_name], line[header_dance_style], line[header_age_range])))
+
+			if line[header_start_notes]:
+				c.sendOSC(OSCMessage(
+					"/eos/set/cue/{}/0.5/label".format(line[header_q_list]), line[header_start_notes]))
+			if line[header_end_notes]:
+				c.sendOSC(OSCMessage(
+					"/eos/set/cue/{}/100/label".format(line[header_q_list]), line[header_end_notes]))
+				
 		c.close()	
 		sys.exit()
 
