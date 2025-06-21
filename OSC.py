@@ -707,9 +707,9 @@ def OSCString(next):
 	The length of the resulting string is always a multiple of 4 bytes.
 	The string ends with 1 to 4 zero-bytes ('\x00') 
 	"""
-	
-	OSCstringLength = math.ceil((len(next)+1) / 4.0) * 4
-	return struct.pack(">%ds" % (OSCstringLength), str(next).encode("utf-8"))
+	encodedStr = str(next).encode("utf-8")
+	OSCstringLength = math.ceil((len(encodedStr)+1) / 4.0) * 4
+	return struct.pack(">%ds" % (OSCstringLength), encodedStr)
 
 def OSCBlob(next):
 	"""Convert a string into an OSC Blob.
